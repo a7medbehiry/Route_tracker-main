@@ -6,7 +6,7 @@ import 'package:route_tracker/models/place_details_model/place_details_model.dar
 
 class PlacesService {
   final String baseUrl = 'https://maps.googleapis.com/maps/api/place';
-  final String apiKey = 'AIzaSyCqifU6y1rTPSLCi0MqySgF36S764pwoVw';
+  final String apiKey = 'AIzaSyCITazQbM_As4eujaMbvF_RpZdRm8DfoQs';
   Future<List<PlaceModel>> getPredictions(
       {required String input, required String sesstionToken}) async {
     var response = await http.get(Uri.parse(
