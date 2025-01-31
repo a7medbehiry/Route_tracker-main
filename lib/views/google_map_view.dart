@@ -56,6 +56,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
         setState(() {});
       });
     });
+    
   }
 
   void initMapStyle() async {
@@ -63,13 +64,6 @@ class _GoogleMapViewState extends State<GoogleMapView> {
         .loadString('assets/map_styles/night_map_style.json');
 
     googleMapController.setMapStyle(nightMapStyle);
-  }
-
-  @override
-  void dispose() {
-    textEditingController.dispose();
-    debounce?.cancel();
-    super.dispose();
   }
 
   @override
@@ -128,20 +122,21 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   }
 
   void updateCurrentLocation() {
-    // try {
-      mapServices.updateCurrentLocation(
-          onUpdatecurrentLocation: () {
-            setState(() {});
-          },
-          googleMapController: googleMapController,
-          markers: markers);
-    // } 
-    // on LocationServiceException catch (e) {
-    //   // TODO:
-    // } on LocationPermissionException catch (e) {
-    //   // TODO :
-    // } catch (e) {
-    //   // TODO:
-    // }
+    mapServices.updateCurrentLocation(
+        onUpdatecurrentLocation: () {
+          setState(() {});
+        },
+        googleMapController: googleMapController,
+        markers: markers);
+  }
+
+  @override
+  void dispose() {
+    googleMapController.dispose();
+    textEditingController.dispose();
+    debounce?.cancel();
+    mapServices.locationService.stopRealTimeLocationUpdates();
+
+    super.dispose();
   }
 }

@@ -1,10 +1,13 @@
 import 'package:location/location.dart';
+import 'dart:async';
 
 class LocationService {
   Location location = Location();
+  StreamSubscription<LocationData>? _locationSubscription;
 
+  // Check and request location services
   Future<void> checkAndRequestLocationService() async {
-    var isServiceEnabled = await location.serviceEnabled();
+    bool isServiceEnabled = await location.serviceEnabled();
     if (!isServiceEnabled) {
       isServiceEnabled = await location.requestService();
       if (!isServiceEnabled) {
@@ -13,8 +16,9 @@ class LocationService {
     }
   }
 
+  // Check and request location permissions
   Future<void> checkAndRequestLocationPermission() async {
-    var permissionStatus = await location.hasPermission();
+    PermissionStatus permissionStatus = await location.hasPermission();
     if (permissionStatus == PermissionStatus.deniedForever) {
       throw LocationPermissionException();
     }
@@ -26,12 +30,19 @@ class LocationService {
     }
   }
 
+  // Start listening to real-time location updates
   void getRealTimeLocationData(void Function(LocationData)? onData) async {
     await checkAndRequestLocationService();
     await checkAndRequestLocationPermission();
-    location.onLocationChanged.listen(onData);
+    _locationSubscription = location.onLocationChanged.listen(onData);
   }
 
+  // Stop listening to real-time location updates
+  void stopRealTimeLocationUpdates() {
+    _locationSubscription?.cancel();
+  }
+
+  // Fetch current location once
   Future<LocationData> getLocation() async {
     await checkAndRequestLocationService();
     await checkAndRequestLocationPermission();
